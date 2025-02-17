@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Pics API</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Anime Pics API</h1>
+    <p>Click the button to get a random anime image:</p>
+    <button onclick="fetchRandomImage()">Get Random Anime Image</button>
+    <img id="animeImage" src="" alt="Anime Image" style="display:none; max-width: 100%; margin-top: 20px;">
+    <br>
+    <p>Enter a URL to shorten:</p>
+    <input type="text" id="urlInput" placeholder="Enter URL to shorten">
+    <button onclick="shortenUrl()">Shorten URL</button>
+    <p id="shortUrl"></p>
+
+    <script>
+        function fetchRandomImage() {
+            fetch('/api/anime/random')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('animeImage').src = data.image;
+                    document.getElementById('animeImage').style.display = 'block';
+                });
+        }
+
+        function shortenUrl() {
+            const url = document.getElementById('urlInput').value;
+            fetch('/api/shorten', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('shortUrl').innerText = 'Short URL: ' + data.short_url;
+            });
+        }
+    </script>
+</body>
+</html>
