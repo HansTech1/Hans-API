@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const shortid = require('shortid');
 const bodyParser = require('body-parser');
+const axios = require('axios');
 
 const app = express();
 const PORT = 3000;
@@ -17,34 +18,39 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/api/anime/random', (req, res) => {
-    fs.readdir(IMAGE_FOLDER, (err, files) => {
-        if (err) {
-            return res.status(500).json({ 
-                status: 500,
-                error: 'Error reading image folder',
-                server: 'Anime Pics API v1.0',
-                creator: 'Mr. Hans'
-            });
-        }
-        if (files.length === 0) {
-            return res.status(404).json({ 
-                status: 404,
-                error: 'No images found',
-                server: 'Anime Pics API v1.0',
-                creator: 'Mr. Hans'
-            });
+app.get('/api/anime/random', async (req, res) => {
+    try {
+        const localFiles = fs.readdirSync(IMAGE_FOLDER);
+        let imageUrl;
+
+        if (localFiles.length > 0 && Math.random() > 0.5) {
+            // Serve a local image 50% of the time
+            const randomImage = localFiles[Math.floor(Math.random() * localFiles.length)];
+            imageUrl = `${req.protocol}://${req.get('host')}/images/${randomImage}`;
+        } else {
+            // Fetch an image from the external API
+            const response = await axios.get('https://api.davidcyriltech.my.id/googleimage?query=anime');
+            if (response.data && response.data.length > 0) {
+                imageUrl = response.data[0];
+            } else {
+                return res.status(500).json({ error: 'Failed to fetch external anime images' });
+            }
         }
 
-        const randomImage = files[Math.floor(Math.random() * files.length)];
-        const imageUrl = `${req.protocol}://${req.get('host')}/images/${randomImage}`;
-        res.json({ 
+        // Shorten the image URL
+        const shortCode = shortid.generate();
+        urlMap.set(shortCode, imageUrl);
+        const shortUrl = `${req.protocol}://${req.get('host')}/s/${shortCode}`;
+
+        res.json({
             status: 200,
-            image: imageUrl,
+            image: shortUrl,
             server: 'Anime Pics API v1.0',
             creator: 'Mr. Hans'
         });
-    });
+    } catch (error) {
+        res.status(500).json({ error: 'Error processing request' });
+    }
 });
 
 app.get('/s/:shortCode', (req, res) => {
@@ -99,3 +105,4 @@ app.use('/images', express.static(IMAGE_FOLDER));
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+        
