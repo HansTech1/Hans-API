@@ -30,8 +30,8 @@ app.get('/api/anime/random', async (req, res) => {
         } else {
             // Fetch an image from the external API
             const response = await axios.get('https://api.davidcyriltech.my.id/googleimage?query=anime');
-            if (response.data && response.data.length > 0) {
-                imageUrl = response.data[0];
+            if (response.data && response.data.results && response.data.results.length > 0) {
+                imageUrl = response.data.results[0]; // Assuming you want the first image from the results
             } else {
                 return res.status(500).json({ error: 'Failed to fetch external anime images' });
             }
@@ -76,7 +76,7 @@ app.post('/api/shorten', (req, res) => {
         status: 200,
         original_url: url,
         short_url: shortUrl,
-        server: 'Anime Pics API v1.0',
+        server: 'Hans Pics API v1.1',
         creator: 'Mr. Hans'
     });
 });
@@ -105,4 +105,4 @@ app.use('/images', express.static(IMAGE_FOLDER));
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
-        
+                    
