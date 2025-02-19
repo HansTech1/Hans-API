@@ -17,9 +17,44 @@
             <a href="/api/shorten?url=https://example.com" target="_blank" class="btn">Try URL Shortener</a>
         </div>
 
+        <div class="url-shortener">
+            <h2>Shorten Your URL</h2>
+            <input type="text" id="urlInput" placeholder="Enter your URL here">
+            <button id="shortenBtn">Shorten URL</button>
+            <div id="shortenedUrlContainer" style="display:none;">
+                <h3>Shortened URL:</h3>
+                <p id="shortenedUrl"></p>
+            </div>
+        </div>
+
         <footer>
             <p>© 2024 - 2099 Hans Tech</p>
         </footer>
     </div>
+
+    <script>
+        document.getElementById('shortenBtn').addEventListener('click', async () => {
+            const urlInput = document.getElementById('urlInput').value;
+            if (!urlInput) {
+                alert("Please enter a URL to shorten!");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/shorten?url=${encodeURIComponent(urlInput)}`);
+                const data = await response.json();
+
+                if (data.status === 200) {
+                    document.getElementById('shortenedUrlContainer').style.display = 'block';
+                    document.getElementById('shortenedUrl').innerText = data.short_url;
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (error) {
+                alert("Failed to shorten the URL. Please try again later.");
+            }
+        });
+    </script>
 </body>
-</html>
+                </html>
+    
