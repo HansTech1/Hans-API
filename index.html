@@ -1,45 +1,25 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Pics API</title>
+    <title>Anime API</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
-    <h1>Anime Pics API</h1>
-    <p>Click the button to get a random anime image:</p>
-    <button onclick="fetchRandomImage()">Get Random Anime Image</button>
-    <img id="animeImage" src="" alt="Anime Image" style="display:none; max-width: 100%; margin-top: 20px;">
-    <br>
-    <p>Enter a URL to shorten:</p>
-    <input type="text" id="urlInput" placeholder="Enter URL to shorten">
-    <button onclick="shortenUrl()">Shorten URL</button>
-    <p id="shortUrl"></p>
+    <div class="container">
+        <h1>Welcome to the Anime API</h1>
+        <p>Fetch random anime images and shorten URLs easily!</p>
 
-    <script>
-        function fetchRandomImage() {
-            fetch('/api/anime/random')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('animeImage').src = data.image;
-                    document.getElementById('animeImage').style.display = 'block';
-                });
-        }
+        <div class="api-buttons">
+            <a href="/api/anime/random" target="_blank" class="btn">Try Anime API</a>
+            <a href="/api/shorten?url=https://example.com" target="_blank" class="btn">Try URL Shortener</a>
+        </div>
 
-        function shortenUrl() {
-            const url = document.getElementById('urlInput').value;
-            fetch('/api/shorten', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('shortUrl').innerText = 'Short URL: ' + data.short_url;
-            });
-        }
-    </script>
+        <footer>
+            <p>© 2024 - 2099 Hans Tech</p>
+        </footer>
+    </div>
 </body>
 </html>
